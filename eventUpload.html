@@ -29,7 +29,7 @@
             border:2px solid gold;
             border-radius: 10px;
             padding:10px;
-            
+
         }
         #coordinators{
             border:2px solid turquoise;
@@ -94,7 +94,7 @@
             color:red;
             display: block;
         }
-        
+
     </style>
 </head>
 <body>
@@ -104,7 +104,7 @@
             <div class="form-group">
                 <label for="category">Select Category</label>
                 <select name="category" id="category" class="form-control category invalid">
-                    <option value="select" selected>select category</option> 
+                    <option value="select" selected>select category</option>
                     <option value="1">one</option>
                     <option value="2">two</option>
                     <option value="3">three</option>
@@ -151,7 +151,7 @@
     </div>
     <!--extra elements-->
     <div class="coordinator">
-        
+
         <div class="coordinator_div">
             <div class="form-group">
                 <small class="form-text">Name</small>
@@ -160,7 +160,7 @@
             <div class="form-group">
                 <small class="form-text">Phone Number</small>
                 <input type="text" name="coordinator_number" class="coordinator_number form-control" placeholder="number" required>
-            </div> 
+            </div>
         </div>
         <div class="close_modal btn btn-danger">x</div>
     </div>
@@ -175,15 +175,30 @@
     <!--extra elements-->
 </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
         $(function(){
 
             const $form = $('#events');
-            
+
             let $coordinator = $('.coordinator').detach();
             let $rule = $('.rule_container').detach();
-            
+
+            //add categories to options list
+            const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
+            const requestUrl = url + "events/categories"
+
+            $.get(requestUrl, function(result){
+              let data = result.data;
+              let categories = data.categories;
+              let categoriesHTML = "<option value='select' selected>select category</option>";
+              for(let value of categories){
+                categoriesHTML = categoriesHTML + "<option value='" + value + "'>" + value + "</option>";
+              }
+              document.getElementById('category').innerHTML = categoriesHTML;
+            });
+
 
             //add rules and coordinators
             const $cor_container = $('#coordinators .hold_coordinators');
@@ -234,10 +249,10 @@
                 }
 
             })
-            
-            
+
+
 
         })
-    
+
     </script>
 </html>

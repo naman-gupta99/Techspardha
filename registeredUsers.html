@@ -10,6 +10,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="config.js" charset="utf-8"></script>
   <script type="text/javascript">
   const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
 
@@ -35,7 +36,7 @@
            type: "GET",
            headers:{
              'Content-Type': "application/x-www-form-urlencoded",
-             'Authorization': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1YXJhdi5hcm9yYTdAZ21haWwuY29tIiwibmFtZSI6IkdhdXJhdiBhcm9yYSIsIm9uQm9hcmQiOnRydWUsInBob25lIjoiOTQxNjI3MjE0MiIsImNvbGxlZ2UiOiJuaXQga2tyIiwieWVhciI6IjMiLCJpYXQiOjE1MzkxNTk0ODcsImV4cCI6MTUzOTIwMjY4N30.m1gQIFc5vYfmIc48lK-RivltJ6IBquf4ibRGXG3p8-E"
+             'Authorization': token
            },
            success: function(result, status) {
              registeredStudents = result;

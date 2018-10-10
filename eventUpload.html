@@ -94,6 +94,13 @@
             color:red;
             display: block;
         }
+        #events .times{
+            display: flex;
+            justify-content: space-between;
+        }
+        #events .times .time_container{
+            flex-basis:45%;
+        }
 
     </style>
 </head>
@@ -120,9 +127,15 @@
                 <label for="date">Event Date</label>
                 <input type="date" name="date" id="date" class="form-control" required>
             </div>
-            <div class="form-group">
-                <label for="time">Time</label>
-                <input type="time" name="time" id="time" class="time form-control" required>
+            <div class="form-group times">
+                <div class="time_container">
+                    <label for="startTime">Start Time</label>
+                    <input type="time" step="1" name="time" id="startTime" class="time form-control" required>
+                </div>
+                <div class="time_container">
+                    <label for="endTime">End Time</label>
+                    <input type="time" step="1" name="time" id="endTime" class="time form-control" required>
+                </div>
             </div>
             <div class="form-group">
                 <label for="venue">Venue</label>
@@ -246,9 +259,10 @@
                 }else{
                     let jsonForm = {
                         category:'',
-                        event_name:'',
+                        eventName:'',
                         date:null,
-                        time:null,
+                        startTime:null,
+                        endTime:null,
                         venue:'',
                         description:'',
                         rules:[],
@@ -258,9 +272,10 @@
 
                     const $form = $('#events');
                     jsonForm.category = $form.find('#category').val();
-                    jsonForm.event_name = $form.find('#event_name').val();
+                    jsonForm.eventName = $form.find('#event_name').val();
                     jsonForm.date = $form.find('#date').val();
-                    jsonForm.time = $form.find('#time').val();
+                    jsonForm.startTime = $form.find('#startTime').val();
+                    jsonForm.endTime = $form.find('#endTime').val();
                     jsonForm.venue = $form.find('#venue').val();
                     jsonForm.description = $form.find('#event_description').val();
 

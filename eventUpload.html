@@ -244,7 +244,37 @@
                 if($("#category").hasClass('invalid')){
                     alert("select a category");
                 }else{
+                    let jsonForm = {
+                        category:'',
+                        event_name:'',
+                        date:null,
+                        time:null,
+                        venue:'',
+                        description:'',
+                        rules:[],
+                        coordinators:[],
+                        file:null
+                    };
+                    
+                    const $form = $('#events');
+                    jsonForm.category = $form.find('#category').val();
+                    jsonForm.event_name = $form.find('#event_name').val();
+                    jsonForm.date = $form.find('#date').val();
+                    jsonForm.time = $form.find('#time').val();
+                    jsonForm.venue = $form.find('#venue').val();
+                    jsonForm.description = $form.find('#event_description').val();
+                    
+                    $form.find('.coordinator').each(function(){
+                        let name = $(this).find('.coordinator_name').val();
+                        let number = $(this).find('.coordinator_number').val();
+                        jsonForm.coordinators.push({coordinator_name:name,coordinator_number:number});
+                    })
 
+                    $form.find('.rule_container').each(function(){
+                        jsonForm.rules.push($(this).find('.rule').val());
+                    });
+                    jsonForm.file = $form.find('#file').val();
+                    console.log(jsonForm);
                     //add json logic and ajax
                 }
 

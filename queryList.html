@@ -94,13 +94,13 @@
 		$(function(){
       		const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
 
-			$(".copy").on('click',function(){
+			/*$(".copy").on('click',function(){
 
 				$('#clipboard').val($(this).prev('span.email').text());
 				$('#clipboard').select();
 				document.execCommand('copy');
 
-			})
+			})*/
 			const $tableBody = $('.query tbody');
 			const $queryRow = $('.query-row tr').detach();
 			
@@ -137,6 +137,15 @@
 
 						})
 						
+					},
+					complete:function(){
+						$(".copy").on('click',function(){
+
+							$('#clipboard').val($(this).prev('span.email').text());
+							$('#clipboard').select();
+							document.execCommand('copy');
+
+						})
 					}
 				});
 

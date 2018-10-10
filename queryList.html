@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	</head>
+	<style>
+		table{
+			min-width:700px;
+		}
+		#clipboard{
+			opacity:0;
+		}
+		.copy{
+			height:30px;
+			width:30px;
+			position: relative;
+		}
+		.copy svg{
+			position: absolute;
+			height: 30px;
+			width: 30px;
+		}
+		.email_col{
+			display: flex;
+			justify-content: space-between;
+			align-items: stretch;
+			height: 100%;
+			background-color:rgb(221, 221, 221);
+		}
+	</style>
+    <body>
+        <div class="container query">
+			<h1>Queries</h1>
+			<input type="text" id="clipboard"/>
+            <div class="table-responsive-sm">
+                <table class="table table-bordered">
+					<thead>
+						<tr>
+							<th scope="col">No</th>
+							<th scope="col">Email</th>
+							<th scope="col">Query</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">1</th>
+							<td class="email_col">
+								<span class="email">reshov456@gmail.com</span>
+								<span class="copy">
+									<svg>
+										<use xlink:href="svg/copy.svg#copy"></use>
+									</svg>
+								</span>
+							</td>
+							<td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod quibusdam porro consectetur dignissimos itaque, laboriosam facilis veritatis asperiores hic accusantium cupiditate ea ullam? Illo reiciendis necessitatibus consectetur voluptas maiores praesentium!</td>
+						</tr>
+						<tr>
+							<th scope="row">2</th>
+							<td class="email_col">
+								<span class="email">harshkirat456@gmail.com</span>
+								<span class="copy">
+									<span class="copy">
+										<svg>
+											<use xlink:href="svg/copy.svg#copy"></use>
+										</svg>
+									</span>
+								</span>
+							</td>
+							<td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod quibusdam porro consectetur dignissimos itaque, laboriosam facilis veritatis asperiores hic accusantium cupiditate ea ullam? Illo reiciendis necessitatibus consectetur voluptas maiores praesentium!</td>
+						</tr>
+						<tr>
+							<th scope="row">3</th>
+							<td class="email_col"><span class="email">nipul456@gmail.com</span><span class="copy btn btn-primary">c</span></td>
+							<td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod quibusdam porro consectetur dignissimos itaque, laboriosam facilis veritatis asperiores hic accusantium cupiditate ea ullam? Illo reiciendis necessitatibus consectetur voluptas maiores praesentium!</td>
+						</tr>
+						<tr>
+							<th scope="row">3</th>
+							<td class="email_col"><span class="email">sourab345346456@gmail.com</span><span class="copy btn btn-primary">c</span></td>
+							<td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod quibusdam porro consectetur dignissimos itaque, laboriosam facilis veritatis asperiores hic accusantium cupiditate ea ullam? Illo reiciendis necessitatibus consectetur voluptas maiores praesentium!</td>
+						</tr>
+						<tr>
+							<th scope="row">3</th>
+							<td class="email_col"><span class="email">aditya456@gmail.com</span><span class="copy btn btn-primary">c</span></td>
+							<td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod quibusdam porro consectetur dignissimos itaque, laboriosam facilis veritatis asperiores hic accusantium cupiditate ea ullam? Illo reiciendis necessitatibus consectetur voluptas maiores praesentium!</td>
+						</tr>
+					</tbody>
+				</table>
+            </div>
+        </div>
+    </body>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+		$(function(){
+
+			$(".copy").on('click',function(){
+
+				$('#clipboard').val($(this).prev('span.email').text());
+				$('#clipboard').select();
+				document.execCommand('copy');
+
+			})
+
+			//retrieve all the queries and put it in a variable
+
+		})
+    </script>
+</html>

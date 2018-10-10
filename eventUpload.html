@@ -187,9 +187,9 @@
 
             //add categories to options list
             const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
-            const requestUrl = url + "events/categories"
+            const requestCategoriesUrl = url + "events/categories"
 
-            $.get(requestUrl, function(result){
+            $.get(requestCategoriesUrl, function(result){
               let data = result.data;
               let categories = data.categories;
               let categoriesHTML = "<option value='select' selected>select category</option>";
@@ -255,7 +255,7 @@
                         coordinators:[],
                         file:null
                     };
-                    
+
                     const $form = $('#events');
                     jsonForm.category = $form.find('#category').val();
                     jsonForm.event_name = $form.find('#event_name').val();
@@ -263,7 +263,7 @@
                     jsonForm.time = $form.find('#time').val();
                     jsonForm.venue = $form.find('#venue').val();
                     jsonForm.description = $form.find('#event_description').val();
-                    
+
                     $form.find('.coordinator').each(function(){
                         let name = $(this).find('.coordinator_name').val();
                         let number = $(this).find('.coordinator_number').val();
@@ -274,8 +274,19 @@
                         jsonForm.rules.push($(this).find('.rule').val());
                     });
                     jsonForm.file = $form.find('#file').val();
-                    console.log(jsonForm);
-                    //add json logic and ajax
+                    let finalForm = {"eventData" : jsonForm}
+                    console.log(finalForm);
+                    let requestPostUrl = url + "events";
+                    $.ajax({
+                           url: requestPostUrl,
+                           data: finalForm,
+                           type: "POST",
+                           headers:{
+                             'Content-Type': "application/x-www-form-urlencoded",
+                             'Authorization': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1YXJhdi5hcm9yYTdAZ21haWwuY29tIiwibmFtZSI6IkdhdXJhdiBhcm9yYSIsIm9uQm9hcmQiOnRydWUsInBob25lIjoiOTQxNjI3MjE0MiIsImNvbGxlZ2UiOiJuaXQga2tyIiwieWVhciI6IjMiLCJpYXQiOjE1MzkxNTk0ODcsImV4cCI6MTUzOTIwMjY4N30.m1gQIFc5vYfmIc48lK-RivltJ6IBquf4ibRGXG3p8-E"
+                           },
+                           success: function(result, status) { console.log(result) }
+                        });
                 }
 
             })

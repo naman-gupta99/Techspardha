@@ -124,7 +124,7 @@
                 <input type="text" name="event_name" id="event_name" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="date">Event Date</label>
+                <label for="date">Tentative Date</label>
                 <input type="date" name="date" id="date" class="form-control" required>
             </div>
             <div class="form-group times">
@@ -144,6 +144,7 @@
             <div class="form-group">
                 <label for="event_description">Event Description</label>
                 <textarea name="event_description" id="event_description" class="form-control" required></textarea>
+                <small class="form-text"><a href="https://www.grammarly.com/?q=brand&utm_source=google&utm_medium=cpc&utm_campaign=brand_f1&utm_content=229882672988&utm_term=grammarly&matchtype=e&placement=&network=g&gclid=Cj0KCQjwxvbdBRC0ARIsAKmec9YPh_x59YATjK3qWdSTkyc3jVhju-7bphz_HbXdlM_God1d9fez-dQaAidCEALw_wcB&breadcrumbs=true&page=install_popup" class="link" target="_blank">please use grammarly plugin</a></small>
             </div>
             <div class="form-group" id="rules_container">
                 <label for="rules"><span>Rules</span><span id="add_rules" class="btn btn-primary push-right">add rule</span></label>
@@ -154,7 +155,7 @@
                 <div class="hold_coordinators"></div>
             </div>
             <div class="form-group">
-                <label for="file">Add File Link</label>
+                <label for="file">Add File / Folder Link (Google drive)</label>
                 <input type="text" name="file" id="file" class="file_link form-control">
             </div>
             <div class="form-group">
@@ -300,7 +301,14 @@
                              'Content-Type': "application/x-www-form-urlencoded",
                              'Authorization': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd1YXJhdi5hcm9yYTdAZ21haWwuY29tIiwibmFtZSI6IkdhdXJhdiBhcm9yYSIsIm9uQm9hcmQiOnRydWUsInBob25lIjoiOTQxNjI3MjE0MiIsImNvbGxlZ2UiOiJuaXQga2tyIiwieWVhciI6IjMiLCJpYXQiOjE1MzkxNTk0ODcsImV4cCI6MTUzOTIwMjY4N30.m1gQIFc5vYfmIc48lK-RivltJ6IBquf4ibRGXG3p8-E"
                            },
-                           success: function(result, status) { console.log(result) }
+                           success: function(result, status) {
+                                console.log(result)
+                                //clearing form 
+                                $form[0].reset();
+                                $form.find('.hold_rules').html('');
+                                $form.find('.hold_coordinators').html('');
+                                },
+
                         });
                 }
 

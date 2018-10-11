@@ -303,7 +303,10 @@
                              'Authorization': token
                            },
                            success: function(result, status) {
-                                console.log(result)
+                                if(status == 'success')
+                                {
+                                  alert('Data input Successful');
+                                }
                                 //clearing form
                                 $form[0].reset();
                                 $form.find('.hold_rules').html('');
@@ -315,7 +318,23 @@
 
             })
 
-
+            //to get event eventData
+            const requestEventDataUrl = url + 'events/description';
+            let eventData = "No event present with specified parameters"
+            function getEventData(eventCategory, eventName){
+              $.get(requestEventDataUrl, {'eventCategory' : eventCategory}, function(result){
+                let data = result.data;
+                let allData = data.events;
+                for(let value of allData){
+                  if(value.eventName == eventName){
+                    eventData = value;
+                    break;
+                  }
+                }
+                console.log(eventData);
+              });
+            }
+            getEventData('informals', 'gamestation');
 
         })
 

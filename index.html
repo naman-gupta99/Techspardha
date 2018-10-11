@@ -202,6 +202,18 @@
 
             //add categories to options list
             const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
+            const requestCategoriesUrl = url + "events/categories"
+
+            $.get(requestCategoriesUrl, function(result){
+              let data = result.data;
+              let categories = data.categories;
+              let categoriesHTML = "<option value='select' selected>select category</option>";
+              for(let value of categories){
+                categoriesHTML = categoriesHTML + "<option value='" + value + "'>" + value + "</option>";
+              }
+              document.getElementById('category').innerHTML = categoriesHTML;
+            });
+            
             const requestEventsUrl = url + "events"
             let events;
             $.get(requestEventsUrl, function(result){

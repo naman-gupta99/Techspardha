@@ -101,21 +101,60 @@
         #events .times .time_container{
             flex-basis:45%;
         }
+        .nav-item{
+            display: inline;
+        }
+        .search-form{
+            display: none;
+        }
+        .navigation{
+            display: flex;
+            justify-content: space-around;
+            width:100%;
+            padding:0;
+            align-items:center;
+        }
+        .navigation li {
+            font-size:20px;
+            padding:10px;
+        }
 
     </style>
 </head>
 <body>
     <div class="container form_container">
-        <h1>Add Event</h1>
-        <form id="events" action="">
+        <nav class="navbar navbar-expand-lg">
+            <ul class="navigation">
+                <li class="nav-item active btn btn-primary" id="add">Add Event</li>
+                <li class="nav-item btn btn-secondary" id="update">Update Event</li>
+            </ul>
+        </nav>
+        <div class="search-form">
+            <h1>Search Event</h1>
+            <form action="#" class="form">
+                <div class="form-group">
+                    <label for="category">Select Category</label>
+                    <select name="category" id="search_category" class="form-control">
+                        <option value="...">Loading...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="event">Select Event</label>
+                    <select name="event" id="event" class="form-control">
+                        <option value="...">Loading...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" id="event-search" value="Search" class="form-control  btn btn-warning" disabled>
+                </div> 
+            </form>
+        </div>
+        <h1 class="heading">Add Event</h1>
+        <form id="events" action="#">
             <div class="form-group">
                 <label for="category">Select Category</label>
                 <select name="category" id="category" class="form-control category invalid">
-                    <option value="select" selected>select category</option>
-                    <option value="1">one</option>
-                    <option value="2">two</option>
-                    <option value="3">three</option>
-                    <option value="4">four</option>
+                    <option value="select">Loading...</option>
                 </select>
                 <small class="form-text category-text invalid-text">select a category</small>
             </div>
@@ -123,14 +162,20 @@
                 <label for="event_name">Event Name</label>
                 <input type="text" name="event_name" id="event_name" class="form-control" required>
             </div>
-            <div class="form-group">
-                <label for="date">Tentative Date</label>
-                <input type="date" name="date" id="date" class="form-control" required>
-            </div>
             <div class="form-group times">
+                <div class="time_container">
+                    <label for="startDate">Start Date</label>
+                    <input type="date"  name="time" id="startDate" class="time form-control" required>
+                </div>
                 <div class="time_container">
                     <label for="startTime">Start Time</label>
                     <input type="time" step="1" name="time" id="startTime" class="time form-control" required>
+                </div>
+            </div>
+            <div class="form-group times">
+                <div class="time_container">
+                    <label for="endDate">End Date</label>
+                    <input type="date"  name="time" id="endDate" class="time form-control" required>
                 </div>
                 <div class="time_container">
                     <label for="endTime">End Time</label>
@@ -198,22 +243,84 @@
 
             const $form = $('#events');
 
+            //reset form
+            function resetForm(){
+                $form[0].reset();
+                $form.find('.hold_rules').html('');
+                $form.find('.hold_coordinators').html('');
+            }
+
             let $coordinator = $('.coordinator').detach();
             let $rule = $('.rule_container').detach();
 
             //add categories to options list
             const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
-            const requestCategoriesUrl = url + "events/categories"
+            const requestCategoriesUrl = url + "events/categories";
+            const requestEventsUrl = url + "events";
+            
+            function refresh_events(){
+                let events;
 
+                $.get(requestEventsUrl, function(result){
+                    let data = result.data;
+                    events = data;
+
+                    $('#search_category').on('change',function(){
+                        let option =  $(this).find('option:selected').val();
+                        let eventList = [];
+                        eventList = events.events.filter(function(event){
+                            if(event.eventCategory === option)
+                                return true;
+                        })
+                        let $event = $('#event').html('');
+                        eventList.forEach(function(event){
+                            let $option = $('<option value='+event.eventName+'>'+event.eventName+'</option>');
+                            $event.append($option);
+                        });
+
+                    });
+                    $('#search_category').trigger('change');
+                    $('.search-form #event-search').removeAttr('disabled');
+                });
+            }
+            
             $.get(requestCategoriesUrl, function(result){
-              let data = result.data;
-              let categories = data.categories;
-              let categoriesHTML = "<option value='select' selected>select category</option>";
-              for(let value of categories){
-                categoriesHTML = categoriesHTML + "<option value='" + value + "'>" + value + "</option>";
-              }
-              document.getElementById('category').innerHTML = categoriesHTML;
+                let data = result.data;
+                let categories = data.categories;
+                let categoriesHTML = "<option value='select' selected>select category</option>";
+                for(let value of categories){
+                    categoriesHTML = categoriesHTML + "<option value='" + value + "'>" + value + "</option>";
+                }
+                //document.getElementById('category').innerHTML = categoriesHTML;
+                $('#search_category, #category').each(function(){
+                    $(this).html(categoriesHTML);
+                });
+                //populate event select
+                refresh_events();
+                
             });
+            
+            
+
+            //switch add and update
+            const $navbar = $("nav");
+            $navbar.on('click','li',function(){
+                $(this).removeClass('btn-secondary');
+                $(this).addClass('btn-primary active');
+                $(this).siblings('li').removeClass('active btn-primary');
+                $(this).siblings('li').addClass('btn-secondary');
+                if($(this).is('#update')){
+                    $('.search-form').css('display','block');
+                    $('.heading').text('Update Event');
+                    refresh_events();
+                }  
+                else{
+                    $('.search-form').css('display','none');
+                    $('.heading').text('Add Event');
+                }
+                resetForm();
+                
+            })
 
             //add rules and coordinators
             const $cor_container = $('#coordinators .hold_coordinators');
@@ -250,7 +357,7 @@
                     $(this).next('small').addClass('invalid-text');
                 }
             })
-
+            
             //handle submit construct json object
             $("#events").on('submit',function(e){
                 e.preventDefault();
@@ -262,7 +369,7 @@
                     let jsonForm = {
                         category:'',
                         eventName:'',
-                        date:null,
+                        
                         startTime:null,
                         endTime:null,
                         venue:'',
@@ -275,9 +382,9 @@
                     const $form = $('#events');
                     jsonForm.category = $form.find('#category').val();
                     jsonForm.eventName = $form.find('#event_name').val();
-                    jsonForm.date = $form.find('#date').val();
-                    jsonForm.startTime = $form.find('#startTime').val();
-                    jsonForm.endTime = $form.find('#endTime').val();
+
+                    jsonForm.startTime = new Date($form.find('#startDate').val()+" "+$form.find('#startTime').val()).getTime();
+                    jsonForm.endTime = new Date($form.find('#endDate').val()+" "+$form.find('#endTime').val()).getTime();
                     jsonForm.venue = $form.find('#venue').val();
                     jsonForm.description = $form.find('#event_description').val();
 
@@ -308,9 +415,7 @@
                                   alert('Data input Successful');
                                 }
                                 //clearing form
-                                $form[0].reset();
-                                $form.find('.hold_rules').html('');
-                                $form.find('.hold_coordinators').html('');
+                                resetForm();
                                 },
 
                         });
@@ -320,23 +425,102 @@
 
             //to get event eventData
             const requestEventDataUrl = url + 'events/description';
-            let eventData = "No event present with specified parameters"
+            //let eventData = "No event present with specified parameters"
             function getEventData(eventCategory, eventName){
-              $.get(requestEventDataUrl, {'eventCategory' : eventCategory}, function(result){
-                let data = result.data;
-                let allData = data.events;
-                for(let value of allData){
-                  if(value.eventName == eventName){
-                    eventData = value;
-                    break;
-                  }
-                }
-                console.log(eventData);
-              });
+                $('#events').css('opacity','0.4');
+                let eventData = {};
+                return new Promise(function(res){
+                    $.get(requestEventDataUrl, {'eventCategory' : eventCategory}, function(result){
+                        let data = result.data;
+                        let allData = data.events;
+                        for(let value of allData){
+                            if(value.eventName === eventName){
+                                eventData = value;
+                                break;
+                            }
+                        }
+                        res(eventData);
+                    });
+                })
             }
-            getEventData('informals', 'gamestation');
+            //getEventData('coding', 'gamestation');
+            function getDateTime(timestamp){
+                let myDate = {
+                    date:null,
+                    time:null
+                }
+                let date = timestamp.toLocaleDateString();
+                let z = date.split('/');
+                z.reverse();
+                if(z[1].length == 1){
+                    z[1] = '0'+z[1];
+                }
+                if(z[2].length == 1){
+                    z[2] = '0'+z[2];
+                }
+                //swap month and date to match html date format
+                let m = z[1];
+                z[1] = z[2];
+                z[2] = m;
+                myDate.date = z.join('-');
+                myDate.time = timestamp.toTimeString().slice(0,8);
 
+                return myDate;
+
+            }
+            //update functionality
+            $('.search-form').on('submit',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                let eventCategory = $(".search-form #search_category option:selected").val();
+                let eventName = $(".search-form #event option:selected").val();
+                
+                getEventData(eventCategory,eventName).then(function(event){
+                    $('#events').css('opacity','1');
+                    $form.find('#category').val(event.eventCategory);
+                    $form.find('#category').removeClass('invalid');
+                    $form.find('#category').next('small').removeClass('invalid-text');
+                    $form.find('#event_name').val(event.eventName);
+                    $form.find('#venue').val(event.venue);
+                    $form.find('#event_description').val(event.description);
+                    $form.find('#file').val(event.file);
+                    event.coordinators.forEach(function(coordinator){
+                        let $c = $coordinator.clone();
+                        $c.find('.coordinator_name').val(coordinator.coordinator_name);
+                        $c.find('.coordinator_number').val(coordinator.coordinator_number);
+                        $c.find('.close_modal').on('click',function(e){
+                            $(this).parent().remove();
+                        })
+                        $cor_container.append($c);
+                    });
+                    event.rules.forEach(function(rule){
+                        let $r = $rule.clone();
+                        $r.find('.rule').val(rule);
+                        $r.find('.close_modal').on('click',function(e){
+                            $(this).parent().remove();
+                        })
+                        $rules_container.append($r);
+                    });
+                    //calculating dates
+
+                    let startTimestamp = new Date(event.startTime);
+                    let start = getDateTime(startTimestamp);
+                    $form.find('#startDate').val(start.date);
+                    $form.find('#startTime').val(start.time);
+                    let endTimeStamp = new Date(event.endTime);
+                    let end = getDateTime(endTimeStamp);
+                    $form.find('#endDate').val(end.date);
+                    $form.find('#endTime').val(end.time);
+
+
+                }).catch(function(e){
+                    console.log(e);
+                })
+
+            })
         })
+
+    
 
     </script>
 </html>

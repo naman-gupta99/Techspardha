@@ -103,7 +103,7 @@
 			})*/
 			const $tableBody = $('.query tbody');
 			const $queryRow = $('.query-row tr').detach();
-			
+
 			//$queryRow;
 			//retrieve all the queries and put it in a variable
 			const requestQueriesUrl = url + "admin/query";
@@ -132,11 +132,11 @@
 								$trClone.find('.email').html(email);
 								$trClone.find('.query-para').html(query);
 								$tableBody.append($trClone);
-							
+
 							})
 
 						})
-						
+
 					},
 					complete:function(){
 						$(".copy").on('click',function(){
@@ -148,6 +148,23 @@
 						})
 					}
 				});
+
+        //Reply to query
+        const replyQueryUrl = url + 'admin/query'
+        function replyQuery(id)
+        {
+          $.ajax({
+              url: replyQueryUrl,
+              data: {'id' : id},
+              type: "PUT",
+              headers: {
+              'Content-Type': "application/x-www-form-urlencoded",
+              'Authorization': token
+              },
+              success: function(result){
+                console.log(result);
+              }
+        }
 
 		})
     </script>

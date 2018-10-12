@@ -274,7 +274,7 @@
                         })
                         let $event = $('#event').html('');
                         eventList.forEach(function(event){
-                            let $option = $('<option value='+event.eventName+'>'+event.eventName+'</option>');
+                            let $option = $('<option value='+event.eventName.replace(/ /g,"-")+'>'+event.eventName+'</option>');
                             $event.append($option);
                         });
 
@@ -289,7 +289,7 @@
                 let categories = data.categories;
                 let categoriesHTML = "<option value='select' selected>select category</option>";
                 for(let value of categories){
-                    categoriesHTML = categoriesHTML + "<option value='" + value + "'>" + value + "</option>";
+                    categoriesHTML = categoriesHTML + "<option value='" + value.replace(/ /g,"-") + "'>" + value + "</option>";
                 }
                 //document.getElementById('category').innerHTML = categoriesHTML;
                 $('#search_category, #category').each(function(){
@@ -399,7 +399,6 @@
                     });
                     jsonForm.file = $form.find('#file').val();
                     let finalForm = {"eventData" : jsonForm}
-                    console.log(finalForm);
                     let requestPostUrl = url + "events";
                     $.ajax({
                            url: requestPostUrl,
@@ -474,8 +473,8 @@
                 e.stopPropagation();
                 let eventCategory = $(".search-form #search_category option:selected").val();
                 let eventName = $(".search-form #event option:selected").val();
-                
-                getEventData(eventCategory,eventName).then(function(event){
+                getEventData(eventCategory.replace(/-/g," "),eventName.replace(/-/g," ")).then(function(event){
+                    console.log(event,"the event");
                     $('#events').css('opacity','1');
                     $form.find('#category').val(event.eventCategory);
                     $form.find('#category').removeClass('invalid');

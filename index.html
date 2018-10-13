@@ -483,23 +483,28 @@
                     $form.find('#venue').val(event.venue);
                     $form.find('#event_description').val(event.description);
                     $form.find('#file').val(event.file);
-                    event.coordinators.forEach(function(coordinator){
-                        let $c = $coordinator.clone();
-                        $c.find('.coordinator_name').val(coordinator.coordinator_name);
-                        $c.find('.coordinator_number').val(coordinator.coordinator_number);
-                        $c.find('.close_modal').on('click',function(e){
-                            $(this).parent().remove();
-                        })
-                        $cor_container.append($c);
-                    });
-                    event.rules.forEach(function(rule){
-                        let $r = $rule.clone();
-                        $r.find('.rule').val(rule);
-                        $r.find('.close_modal').on('click',function(e){
-                            $(this).parent().remove();
-                        })
-                        $rules_container.append($r);
-                    });
+                    if(event.coordinators.length){
+                        event.coordinators.forEach(function(coordinator){
+                            let $c = $coordinator.clone();
+                            $c.find('.coordinator_name').val(coordinator.coordinator_name);
+                            $c.find('.coordinator_number').val(coordinator.coordinator_number);
+                            $c.find('.close_modal').on('click',function(e){
+                                $(this).parent().remove();
+                            })
+                            $cor_container.append($c);
+                        });
+                    }
+                    if(event.rules.length){
+                        event.rules.forEach(function(rule){
+                            let $r = $rule.clone();
+                            $r.find('.rule').val(rule);
+                            $r.find('.close_modal').on('click',function(e){
+                                $(this).parent().remove();
+                            })
+                            $rules_container.append($r);
+                        });
+                    }
+                    
                     //calculating dates
 
                     let startTimestamp = new Date(event.startTime);

@@ -47,13 +47,32 @@
 			height: 100%;
 			background-color:rgb(240, 240, 240);
 		}
+		.delete{
+			background-color: tomato;
+			transition:all 0.3s;
+		}
+		.delete:hover,.delete:focus{
+			background-color:rgb(202, 37, 8);
+		}
+		.delete svg {
+			width:30px;
+			height: 30px;
+			margin:auto;
+			position: relative;
+			fill:white;
+			display: block;
+		}
+		.replied{
+			background-color:turquoise;
+			text-align:center;
+		}
 	</style>
     <body>
         <div class="container query">
 			<h1>Queries</h1>
 			<input type="text" id="clipboard"/>
             <div class="table-responsive-sm">
-                <table class="table table-bordered">
+                <table class="table table-bordered query-table">
 					<thead>
 						<tr>
 							<th scope="col">No</th>
@@ -73,7 +92,11 @@
 		</div>
 		<table class="query-row">
 			<tr>
-				<th scope="row" class="serial">1</th>
+				<th scope="row" class="delete">
+					<svg>
+						<use xlink:href="svg/delete.svg#delete"></use>
+					</svg>
+				</th>
 				<td class="email_col">
 					<span class="email"></span>
 					<span class="copy">
@@ -94,20 +117,35 @@
 		$(function(){
       		const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
 
-			/*$(".copy").on('click',function(){
-
-				$('#clipboard').val($(this).prev('span.email').text());
-				$('#clipboard').select();
-				document.execCommand('copy');
-
-			})*/
+			
 			const $tableBody = $('.query tbody');
 			const $queryRow = $('.query-row tr').detach();
-
+			
 			//$queryRow;
 			//retrieve all the queries and put it in a variable
 			const requestQueriesUrl = url + "admin/query";
 			let queries;
+
+			const replyQueryUrl = url + 'admin/query'
+			function replyQuery(id)
+			{
+				return new Promise(function(res){
+					$.ajax({
+						url: replyQueryUrl,
+						data: {'id' : id},
+						type: "PUT",
+						headers: {
+						'Content-Type': "application/x-www-form-urlencoded",
+						'Authorization': token
+						},
+						success: function(result){
+							console.log(result);
+							res(result);
+						}
+					});
+				})
+				
+			}
 
 			$.ajax({
 					url: requestQueriesUrl,
@@ -121,22 +159,56 @@
 						console.log(queries);
 						$tableBody.html('');
 						let count = 1;
+						let allQueries = [];
+						let myQuery = {}
 						queries.forEach(function(el){
+							el.query.forEach(function(q){
+								allQueries.push({email:el.email, query:q})
+							})
+						});
+						allQueries.sort(function(a,b){
+							if(a.query.status)
+								return -1;
+							else
+								return 1;
+						})
+						console.log(allQueries,"all");
+						allQueries.forEach(function(el){
 
 							let email = el.email;
-							el.query.forEach(function(query){
 
-								let $trClone = $queryRow.clone();
-								$trClone.find('.serial').html(count);
-								count++;
-								$trClone.find('.email').html(email);
-								$trClone.find('.query-para').html(query);
-								$tableBody.append($trClone);
-
-							})
-
+							let $trClone = $queryRow.clone();
+							$trClone.attr('data-id',el.query.id);
+							if(!el.query.status){//if not replied
+								$trClone.find('.delete').empty();
+								$trClone.find('.delete').html('Replied');
+								$trClone.find('.delete').addClass('replied');
+								$trClone.find('.delete').removeClass('delete');
+							}
+							$trClone.find('.serial').html(count);
+							$trClone.find('.email').html(email);
+							$trClone.find('.query-para').html(el.query.text);
+							$tableBody.append($trClone);
+						
 						})
-
+						$delete = $('.query .delete');
+						$delete.on('click',function(e){
+							
+							if($(this).hasClass('delete')){
+								let id = $(this).parent('tr').attr('data-id');
+								console.log(id,'id');
+								let myThis = this;
+								replyQuery(id).then(function(data){
+									console.log(data);
+									$(myThis).removeClass('delete');
+									$(myThis).addClass('replied');
+									$(myThis).html('Replied');
+									let $row = $(myThis).parent('tr').detach();
+									$tableBody.append($row);
+								})
+							}
+						})
+						
 					},
 					complete:function(){
 						$(".copy").on('click',function(){
@@ -148,26 +220,8 @@
 						})
 					}
 				});
+				
 
-        //Reply to query
-        const replyQueryUrl = url + 'admin/query'
-        function replyQuery(id)
-        {
-          $.ajax({
-              url: replyQueryUrl,
-              data: {'id' : id},
-              type: "PUT",
-              headers: {
-              'Content-Type': "application/x-www-form-urlencoded",
-              'Authorization': token
-              },
-              success: function(result){
-                console.log(result);
-              }
-        })
-
-        }
-        replyQuery(1539279964446)
-    })
+		})
     </script>
 </html>

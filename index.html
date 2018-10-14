@@ -118,6 +118,9 @@
             font-size:20px;
             padding:10px;
         }
+        #flagship .flagship-label{
+            margin-right:20px;
+        }
 
     </style>
 </head>
@@ -162,9 +165,20 @@
                 <label for="event_name">Event Name</label>
                 <input type="text" name="event_name" id="event_name" class="form-control" required>
             </div>
+            <div class="form-group" id="flagship">
+                <span class="flagship-label">Flagship Event: </span>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="flagship" id="true" class="form-check-input" value="true">
+                    <label for="true" class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="flagship" id="false" class="form-check-input" value="false" checked>
+                    <label for="false" class="form-check-label">No</label>
+                </div>
+            </div>
             <div class="form-group times">
                 <div class="time_container">
-                    <label for="startDate">Start Date</label>
+                    <label for="startDate">Start Date (Tentative)</label>
                     <input type="date"  name="time" id="startDate" class="time form-control" required>
                 </div>
                 <div class="time_container">
@@ -174,7 +188,7 @@
             </div>
             <div class="form-group times">
                 <div class="time_container">
-                    <label for="endDate">End Date</label>
+                    <label for="endDate">End Date (Tentative)</label>
                     <input type="date"  name="time" id="endDate" class="time form-control" required>
                 </div>
                 <div class="time_container">
@@ -274,7 +288,7 @@
                         })
                         let $event = $('#event').html('');
                         eventList.forEach(function(event){
-                            let $option = $('<option value='+event.eventName.replace(/ /g,"-")+'>'+event.eventName+'</option>');
+                            let $option = $('<option value='+event.eventName.replace(/ /g,"$")+'>'+event.eventName+'</option>');
                             $event.append($option);
                         });
 
@@ -289,7 +303,7 @@
                 let categories = data.categories;
                 let categoriesHTML = "<option value='select' selected>select category</option>";
                 for(let value of categories){
-                    categoriesHTML = categoriesHTML + "<option value='" + value.replace(/ /g,"-") + "'>" + value + "</option>";
+                    categoriesHTML = categoriesHTML + "<option value='" + value.replace(/ /g,"$") + "'>" + value + "</option>";
                 }
                 //document.getElementById('category').innerHTML = categoriesHTML;
                 $('#search_category, #category').each(function(){
@@ -369,7 +383,7 @@
                     let jsonForm = {
                         category:'',
                         eventName:'',
-                        
+                        flagship:false,
                         startTime:null,
                         endTime:null,
                         venue:'',
@@ -382,18 +396,18 @@
                     const $form = $('#events');
                     jsonForm.category = $form.find('#category').val();
                     jsonForm.eventName = $form.find('#event_name').val();
-
+                    jsonForm.flagship = $form.find('#flagship').find('input[name="flagship"]:checked').val();
                     jsonForm.startTime = new Date($form.find('#startDate').val()+" "+$form.find('#startTime').val()).getTime();
                     jsonForm.endTime = new Date($form.find('#endDate').val()+" "+$form.find('#endTime').val()).getTime();
                     jsonForm.venue = $form.find('#venue').val();
                     jsonForm.description = $form.find('#event_description').val();
-
+                    jsonForm.coordinators = [];
                     $form.find('.coordinator').each(function(){
                         let name = $(this).find('.coordinator_name').val();
                         let number = $(this).find('.coordinator_number').val();
                         jsonForm.coordinators.push({coordinator_name:name,coordinator_number:number});
                     })
-
+                    jsonForm.rules = [];
                     $form.find('.rule_container').each(function(){
                         jsonForm.rules.push($(this).find('.rule').val());
                     });
@@ -473,17 +487,19 @@
                 e.stopPropagation();
                 let eventCategory = $(".search-form #search_category option:selected").val();
                 let eventName = $(".search-form #event option:selected").val();
-                getEventData(eventCategory.replace(/-/g," "),eventName.replace(/-/g," ")).then(function(event){
+                getEventData(eventCategory.replace(/\$/g," "),eventName.replace(/\$/g," ")).then(function(event){
                     console.log(event,"the event");
                     $('#events').css('opacity','1');
                     $form.find('#category').val(event.eventCategory);
                     $form.find('#category').removeClass('invalid');
                     $form.find('#category').next('small').removeClass('invalid-text');
                     $form.find('#event_name').val(event.eventName);
+                    let flagship = event.flagship != undefined ? event.flagship : false;
+                    $form.find('#flagship').find('input:radio[name="flagship"]').filter('[value="'+flagship+'"]').attr('checked',true);
                     $form.find('#venue').val(event.venue);
                     $form.find('#event_description').val(event.description);
                     $form.find('#file').val(event.file);
-                    if(event.coordinators.length){
+                    if(event.coordinators!=undefined){
                         event.coordinators.forEach(function(coordinator){
                             let $c = $coordinator.clone();
                             $c.find('.coordinator_name').val(coordinator.coordinator_name);
@@ -494,7 +510,7 @@
                             $cor_container.append($c);
                         });
                     }
-                    if(event.rules.length){
+                    if(event.rules!=undefined){
                         event.rules.forEach(function(rule){
                             let $r = $rule.clone();
                             $r.find('.rule').val(rule);

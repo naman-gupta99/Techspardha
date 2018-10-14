@@ -262,6 +262,7 @@
                 $form[0].reset();
                 $form.find('.hold_rules').html('');
                 $form.find('.hold_coordinators').html('');
+                $form.find('#category').trigger('change');
             }
 
             let $coordinator = $('.coordinator').detach();
@@ -326,11 +327,16 @@
                 if($(this).is('#update')){
                     $('.search-form').css('display','block');
                     $('.heading').text('Update Event');
+                    $form.find('#category').attr('disabled',true);
+                    $form.find('#event_name').attr('disabled',true);
                     refresh_events();
                 }  
                 else{
                     $('.search-form').css('display','none');
                     $('.heading').text('Add Event');
+                    $form.find('#category').removeAttr('disabled');
+                    $form.find('#event_name').removeAttr('disabled');
+                    
                 }
                 resetForm();
                 
@@ -452,6 +458,7 @@
                                 break;
                             }
                         }
+                        resetForm();
                         res(eventData);
                     });
                 })

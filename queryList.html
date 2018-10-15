@@ -127,12 +127,12 @@
 			let queries;
 
 			const replyQueryUrl = url + 'admin/query'
-			function replyQuery(id)
+			function replyQuery(id,email)
 			{
 				return new Promise(function(res){
 					$.ajax({
 						url: replyQueryUrl,
-						data: {'id' : id},
+						data: {'id' : id, 'queryEmail' : email},
 						type: "PUT",
 						headers: {
 						'Content-Type': "application/x-www-form-urlencoded",
@@ -179,6 +179,7 @@
 
 							let $trClone = $queryRow.clone();
 							$trClone.attr('data-id',el.query.id);
+							$trClone.attr('data-email',email);
 							if(!el.query.status){//if not replied
 								$trClone.find('.delete').empty();
 								$trClone.find('.delete').html('Replied');
@@ -195,10 +196,13 @@
 						$delete.on('click',function(e){
 							
 							if($(this).hasClass('delete')){
+								$tableBody.css('opacity','0.4');
 								let id = $(this).parent('tr').attr('data-id');
-								console.log(id,'id');
+								let email = $(this).parent('tr').attr('data-email');
+								console.log(id,'id',email,'email');
 								let myThis = this;
-								replyQuery(id).then(function(data){
+								replyQuery(id,email).then(function(data){
+									$tableBody.css('opacity','1');
 									console.log(data);
 									$(myThis).removeClass('delete');
 									$(myThis).addClass('replied');

@@ -78,11 +78,13 @@
 							<th scope="col">No</th>
 							<th scope="col">Email</th>
 							<th scope="col">Query</th>
+							<th scope="col">Date/Time</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<td></td>
+							<td>Loading...</td>
 							<td>Loading...</td>
 							<td>Loading...</td>
 						</tr>
@@ -106,6 +108,7 @@
 					</span>
 				</td>
 				<td class="query-para"></td>
+				<td class="date"></td>
 			</tr>
 		</div>
     </body>
@@ -147,6 +150,31 @@
 				
 			}
 
+			function sort_table(allTuples){
+				let deleteArray = allTuples.filter(function(a){
+					return $(a).find('th').hasClass('delete');
+				})
+				let repliedArray = allTuples.filter(function(a){
+					return $(a).find('th').hasClass('replied');
+				})
+				deleteArray.sort(function(a,b){
+
+					let dateA = new Date($(a).find('.date').text());
+					let dateB = new Date($(b).find('.date').text());
+
+					return dateB - dateA;
+				});
+				repliedArray.sort(function(a,b){
+
+					let dateA = new Date($(a).find('.date').text());
+					let dateB = new Date($(b).find('.date').text());
+
+					return dateB - dateA;
+				});
+				let total = [...deleteArray,...repliedArray];
+				$tableBody.append(total);
+			}
+
 			$.ajax({
 					url: requestQueriesUrl,
 					type: "GET",
@@ -166,13 +194,6 @@
 								allQueries.push({email:el.email, query:q})
 							})
 						});
-						allQueries.sort(function(a,b){
-							if(a.query.status)
-								return -1;
-							else
-								return 1;
-						})
-						console.log(allQueries,"all");
 						allQueries.forEach(function(el){
 
 							let email = el.email;
@@ -189,6 +210,7 @@
 							$trClone.find('.serial').html(count);
 							$trClone.find('.email').html(email);
 							$trClone.find('.query-para').html(el.query.text);
+							$trClone.find('.date').html(new Date(el.query.id).toLocaleString());
 							$tableBody.append($trClone);
 						
 						})
@@ -207,8 +229,8 @@
 									$(myThis).removeClass('delete');
 									$(myThis).addClass('replied');
 									$(myThis).html('Replied');
-									let $row = $(myThis).parent('tr').detach();
-									$tableBody.append($row);
+									let allTuples = $('.query tr').toArray();
+									sort_table(allTuples);
 								})
 							}
 						})
@@ -221,7 +243,9 @@
 							$('#clipboard').select();
 							document.execCommand('copy');
 
-						})
+						});
+						let allTuples = $('.query tbody tr').toArray();
+						sort_table(allTuples);
 					}
 				});
 				

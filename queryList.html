@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	</head>
+	<style>
+		body{
+			background-color: teal;
+		}
+		.query{
+			background-color: white;
+			min-height: 600px;
+			margin-top:30px;
+			padding:15px;
+			border-radius: 10px;
+		}
+		@media only screen and (max-width:600px){
+			.query{
+				margin-top: 10px;
+				border-radius: 0;
+			}
+		}
+		table{
+			min-width:700px;
+		}
+		#clipboard{
+			opacity:0;
+		}
+		.copy{
+			height:30px;
+			width:30px;
+			position: relative;
+		}
+		.copy svg{
+			position: absolute;
+			height: 30px;
+			width: 30px;
+		}
+		.email_col{
+			display: flex;
+			justify-content: space-between;
+			align-items: stretch;
+			height: 100%;
+			background-color:rgb(240, 240, 240);
+		}
+		.delete{
+			background-color: tomato;
+			transition:all 0.3s;
+		}
+		.delete:hover,.delete:focus{
+			background-color:rgb(202, 37, 8);
+		}
+		.delete svg {
+			width:30px;
+			height: 30px;
+			margin:auto;
+			position: relative;
+			fill:white;
+			display: block;
+		}
+		.replied{
+			background-color:turquoise;
+			text-align:center;
+		}
+	</style>
+    <body>
+        <div class="container query">
+			<h1>Queries</h1>
+			<input type="text" id="clipboard"/>
+            <div class="table-responsive-sm">
+                <table class="table table-bordered query-table">
+					<thead>
+						<tr>
+							<th scope="col">No</th>
+							<th scope="col">Email</th>
+							<th scope="col">Query</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td></td>
+							<td>Loading...</td>
+							<td>Loading...</td>
+						</tr>
+					</tbody>
+				</table>
+            </div>
+		</div>
+		<table class="query-row">
+			<tr>
+				<th scope="row" class="delete">
+					<svg>
+						<use xlink:href="svg/delete.svg#delete"></use>
+					</svg>
+				</th>
+				<td class="email_col">
+					<span class="email"></span>
+					<span class="copy">
+						<svg>
+							<use xlink:href="svg/copy.svg#copy"></use>
+						</svg>
+					</span>
+				</td>
+				<td class="query-para"></td>
+			</tr>
+		</div>
+    </body>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="config.js" charset="utf-8"></script>
+	<script>
+		$(function(){
+      		const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
+
+			
+			const $tableBody = $('.query tbody');
+			const $queryRow = $('.query-row tr').detach();
+			
+			//$queryRow;
+			//retrieve all the queries and put it in a variable
+			const requestQueriesUrl = url + "admin/query";
+			let queries;
+
+			const replyQueryUrl = url + 'admin/query'
+			function replyQuery(id,email)
+			{
+				return new Promise(function(res){
+					$.ajax({
+						url: replyQueryUrl,
+						data: {'id' : id, 'queryEmail' : email},
+						type: "PUT",
+						headers: {
+						'Content-Type': "application/x-www-form-urlencoded",
+						'Authorization': token
+						},
+						success: function(result){
+							console.log(result);
+							res(result);
+						}
+					});
+				})
+				
+			}
+
+			$.ajax({
+					url: requestQueriesUrl,
+					type: "GET",
+					headers:{
+					'Content-Type': "application/x-www-form-urlencoded",
+					'Authorization': token
+					},
+					success: function(result, status) {
+						queries = result.data.queries;
+						console.log(queries);
+						$tableBody.html('');
+						let count = 1;
+						let allQueries = [];
+						let myQuery = {}
+						queries.forEach(function(el){
+							el.query.forEach(function(q){
+								allQueries.push({email:el.email, query:q})
+							})
+						});
+						allQueries.sort(function(a,b){
+							if(a.query.status)
+								return -1;
+							else
+								return 1;
+						})
+						console.log(allQueries,"all");
+						allQueries.forEach(function(el){
+
+							let email = el.email;
+
+							let $trClone = $queryRow.clone();
+							$trClone.attr('data-id',el.query.id);
+							$trClone.attr('data-email',email);
+							if(!el.query.status){//if not replied
+								$trClone.find('.delete').empty();
+								$trClone.find('.delete').html('Replied');
+								$trClone.find('.delete').addClass('replied');
+								$trClone.find('.delete').removeClass('delete');
+							}
+							$trClone.find('.serial').html(count);
+							$trClone.find('.email').html(email);
+							$trClone.find('.query-para').html(el.query.text);
+							$tableBody.append($trClone);
+						
+						})
+						$delete = $('.query .delete');
+						$delete.on('click',function(e){
+							
+							if($(this).hasClass('delete')){
+								$tableBody.css('opacity','0.4');
+								let id = $(this).parent('tr').attr('data-id');
+								let email = $(this).parent('tr').attr('data-email');
+								console.log(id,'id',email,'email');
+								let myThis = this;
+								replyQuery(id,email).then(function(data){
+									$tableBody.css('opacity','1');
+									console.log(data);
+									$(myThis).removeClass('delete');
+									$(myThis).addClass('replied');
+									$(myThis).html('Replied');
+									let $row = $(myThis).parent('tr').detach();
+									$tableBody.append($row);
+								})
+							}
+						})
+						
+					},
+					complete:function(){
+						$(".copy").on('click',function(){
+
+							$('#clipboard').val($(this).prev('span.email').text());
+							$('#clipboard').select();
+							document.execCommand('copy');
+
+						})
+					}
+				});
+				
+
+		})
+    </script>
+</html>

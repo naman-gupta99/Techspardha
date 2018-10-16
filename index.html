@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        body{
+            background-color: teal;
+        }
+        .form_container{
+            width:60%;
+            background-color: white;
+            padding:30px 25px;
+        }
+        label[for="rules"]{
+            width:100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        label[for="coordinator"]{
+            width:100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        #rules_container{
+            border:2px solid gold;
+            border-radius: 10px;
+            padding:10px;
+
+        }
+        #coordinators{
+            border:2px solid turquoise;
+            border-radius: 10px;
+            padding:10px;
+        }
+        #coordinators .coordinator{
+            position: relative;
+            border:2px solid turquoise;
+            border-width: 2px 0 0 0;
+            padding:5px;
+        }
+        .form-group{
+            position: relative;
+        }
+        #rules_container .rule_container{
+            display: flex;
+            flex-direction: row-reverse;
+            border:2px solid gold;
+            border-width: 2px 0 0 0;
+            padding:5px;
+
+        }
+        #rules_container .rule_container .rule_div{
+            flex-grow:1;
+        }
+        .coordinator{
+            display:flex;
+        }
+        .coordinator .coordinator_div{
+            flex-grow: 1;
+        }
+        .coordinator .close_modal{
+            align-self: center;
+            height: 115px;
+        }
+        .close_modal{
+            align-self: flex-end;
+            flex-basis:50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media only screen and (max-width:600px){
+            .form_container{
+                width:100%;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+        .submit{
+            width:100%;
+            height:50px;
+        }
+        .category.invalid{
+            border-color:tomato;
+        }
+        .category-text{
+            display: none;
+        }
+        .invalid-text{
+            color:red;
+            display: block;
+        }
+        #events .times{
+            display: flex;
+            justify-content: space-between;
+        }
+        #events .times .time_container{
+            flex-basis:45%;
+        }
+        .nav-item{
+            display: inline;
+        }
+        .search-form{
+            display: none;
+        }
+        .navigation{
+            display: flex;
+            justify-content: space-around;
+            width:100%;
+            padding:0;
+            align-items:center;
+        }
+        .navigation li {
+            font-size:20px;
+            padding:10px;
+        }
+        #flagship .flagship-label{
+            margin-right:20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container form_container">
+        <nav class="navbar navbar-expand-lg">
+            <ul class="navigation">
+                <li class="nav-item active btn btn-primary" id="add">Add Event</li>
+                <li class="nav-item btn btn-secondary" id="update">Update Event</li>
+            </ul>
+        </nav>
+        <div class="search-form">
+            <h1>Search Event</h1>
+            <form action="#" class="form">
+                <div class="form-group">
+                    <label for="search_category">Select Category</label>
+                    <select name="category" id="search_category" class="form-control">
+                        <option value="...">Loading...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="event">Select Event</label>
+                    <select name="event" id="event" class="form-control">
+                        <option value="...">Loading...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" id="event-search" value="Search" class="form-control  btn btn-warning" disabled>
+                </div> 
+            </form>
+        </div>
+        <h1 class="heading">Add Event</h1>
+        <form id="events" action="#">
+            <div class="form-group">
+                <label for="category">Select Category</label>
+                <select name="category" id="category" class="form-control category invalid">
+                    <option value="select">Loading...</option>
+                </select>
+                <small class="form-text category-text invalid-text">select a category</small>
+            </div>
+            <div class="form-group">
+                <label for="event_name">Event Name</label>
+                <input type="text" name="event_name" id="event_name" class="form-control" required>
+            </div>
+            <div class="form-group" id="flagship">
+                <span class="flagship-label">Flagship Event: </span>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="flagship" id="true" class="form-check-input" value="true">
+                    <label for="true" class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" name="flagship" id="false" class="form-check-input" value="false" checked>
+                    <label for="false" class="form-check-label">No</label>
+                </div>
+            </div>
+            <div class="form-group times">
+                <div class="time_container">
+                    <label for="startDate">Start Date (Tentative)</label>
+                    <input type="date"  name="time" id="startDate" class="time form-control" required>
+                </div>
+                <div class="time_container">
+                    <label for="startTime">Start Time</label>
+                    <input type="time" step="1" name="time" id="startTime" class="time form-control" required>
+                </div>
+            </div>
+            <div class="form-group times">
+                <div class="time_container">
+                    <label for="endDate">End Date (Tentative)</label>
+                    <input type="date"  name="time" id="endDate" class="time form-control" required>
+                </div>
+                <div class="time_container">
+                    <label for="endTime">End Time</label>
+                    <input type="time" step="1" name="time" id="endTime" class="time form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="venue">Venue</label>
+                <input type="text" name="venue" id="venue" class="venue form-control" >
+            </div>
+            <div class="form-group">
+                <label for="event_description">Event Description</label>
+                <textarea name="event_description" id="event_description" class="form-control" required></textarea>
+                <small class="form-text"><a href="https://www.grammarly.com/?q=brand&utm_source=google&utm_medium=cpc&utm_campaign=brand_f1&utm_content=229882672988&utm_term=grammarly&matchtype=e&placement=&network=g&gclid=Cj0KCQjwxvbdBRC0ARIsAKmec9YPh_x59YATjK3qWdSTkyc3jVhju-7bphz_HbXdlM_God1d9fez-dQaAidCEALw_wcB&breadcrumbs=true&page=install_popup" class="link" target="_blank">please use grammarly plugin</a></small>
+            </div>
+            <div class="form-group" id="rules_container">
+                <label for="rules"><span>Rules</span><span id="add_rules" class="btn btn-primary push-right">add rule</span></label>
+                <div class="hold_rules"></div>
+            </div>
+            <div class="form-group" id="coordinators">
+                <label for="coordinator"><span>Coordinators</span><span id="add_person" class="btn btn-primary">add coordinator</span></label>
+                <div class="hold_coordinators"></div>
+            </div>
+            <div class="form-group">
+                <label for="file">Add File / Folder Link (Google drive)</label>
+                <input type="text" name="file" id="file" class="file_link form-control">
+            </div>
+            <div class="form-group">
+                <input type="submit" value="SUBMIT" class="submit btn btn-success">
+            </div>
+        </form>
+    </div>
+    <!--extra elements-->
+    <div class="coordinator">
+
+        <div class="coordinator_div">
+            <div class="form-group">
+                <small class="form-text">Name</small>
+                <input type="text" name="coordinator_name"  class="coordinator_name form-control" placeholder="name" required>
+            </div>
+            <div class="form-group">
+                <small class="form-text">Phone Number</small>
+                <input type="text" name="coordinator_number" class="coordinator_number form-control" placeholder="number" required>
+            </div>
+        </div>
+        <div class="close_modal btn btn-danger">x</div>
+    </div>
+
+    <div class="form-group rule_container">
+        <div class="close_modal btn btn-danger" >x</div>
+        <div class="rule_div">
+            <small class="form-text">Rule</small>
+            <input type="text" name="rule" class="form-control rule" required>
+        </div>
+    </div>
+    <!--extra elements-->
+    <a href="queryList.html">See queryList.html</a>
+    <a href="addNotice.html">See addNotice.html</a>
+</body>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="config.js" charset="utf-8"></script>
+    <script>
+        $(function(){
+
+            const $form = $('#events');
+
+            //reset form
+            function resetForm(){
+                $form[0].reset();
+                $form.find('.hold_rules').html('');
+                $form.find('.hold_coordinators').html('');
+                $form.find('#category').trigger('change');
+            }
+
+            let $coordinator = $('.coordinator').detach();
+            let $rule = $('.rule_container').detach();
+
+            //add categories to options list
+            const url = "https://us-central1-techspardha-87928.cloudfunctions.net/api/";
+            const requestCategoriesUrl = url + "events/categories";
+            const requestEventsUrl = url + "events";
+            
+            function refresh_events(){
+                let events;
+
+                $.get(requestEventsUrl, function(result){
+                    let data = result.data;
+                    events = data;
+
+                    $('#search_category').on('change',function(){
+                        let option =  $(this).find('option:selected').val();
+                        let eventList = [];
+                        eventList = events.events.filter(function(event){
+                            if(event.eventCategory === option)
+                                return true;
+                        })
+                        let $event = $('#event').html('');
+                        eventList.forEach(function(event){
+                            let $option = $('<option value='+event.eventName.replace(/ /g,"$")+'>'+event.eventName+'</option>');
+                            $event.append($option);
+                        });
+
+                    });
+                    $('#search_category').trigger('change');
+                    $('.search-form #event-search').removeAttr('disabled');
+                });
+            }
+            
+            $.get(requestCategoriesUrl, function(result){
+                let data = result.data;
+                let categories = data.categories;
+                let categoriesHTML = "<option value='select' selected>select category</option>";
+                for(let value of categories){
+                    categoriesHTML = categoriesHTML + "<option value='" + value.replace(/ /g,"$") + "'>" + value + "</option>";
+                }
+                //document.getElementById('category').innerHTML = categoriesHTML;
+                $('#search_category, #category').each(function(){
+                    $(this).html(categoriesHTML);
+                });
+                //populate event select
+                refresh_events();
+                
+            });
+            
+            
+
+            //switch add and update
+            const $navbar = $("nav");
+            $navbar.on('click','li',function(){
+                $(this).removeClass('btn-secondary');
+                $(this).addClass('btn-primary active');
+                $(this).siblings('li').removeClass('active btn-primary');
+                $(this).siblings('li').addClass('btn-secondary');
+                if($(this).is('#update')){
+                    $('.search-form').css('display','block');
+                    $('.heading').text('Update Event');
+                    $form.find('#category').attr('disabled',true);
+                    $form.find('#event_name').attr('disabled',true);
+                    refresh_events();
+                }  
+                else{
+                    $('.search-form').css('display','none');
+                    $('.heading').text('Add Event');
+                    $form.find('#category').removeAttr('disabled');
+                    $form.find('#event_name').removeAttr('disabled');
+                    
+                }
+                resetForm();
+                
+            })
+
+            //add rules and coordinators
+            const $cor_container = $('#coordinators .hold_coordinators');
+            $('#add_person').on('click',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                let $newCoordinator = $coordinator.clone();
+                $newCoordinator.find('.close_modal').on('click',function(e){
+                    $(this).parent().remove();
+                })
+                $cor_container.prepend($newCoordinator);
+
+            })
+            const $rules_container = $('#rules_container .hold_rules');
+            $('#add_rules').on('click',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                let $newRule = $rule.clone();
+                $newRule.find('.close_modal').on('click',function(e){
+                    $(this).parent().remove();
+                })
+                $rules_container.prepend($newRule);
+            })
+
+            //category validator
+            $("#category").on('change',function(e){
+                let val = $(this).find('option:selected').val();
+                if(!(val === 'select')){
+                    $(this).removeClass('invalid');
+                    $(this).next('small').removeClass('invalid-text');
+                }
+                else{
+                    $(this).addClass('invalid');
+                    $(this).next('small').addClass('invalid-text');
+                }
+            })
+            
+            //handle submit construct json object
+            $("#events").on('submit',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+
+                if($("#category").hasClass('invalid')){
+                    alert("select a category");
+                }else{
+                    let jsonForm = {
+                        category:'',
+                        eventName:'',
+                        flagship:false,
+                        startTime:null,
+                        endTime:null,
+                        venue:'',
+                        description:'',
+                        rules:[],
+                        coordinators:[],
+                        file:null
+                    };
+
+                    const $form = $('#events');
+                    jsonForm.category = $form.find('#category').val();
+                    jsonForm.eventName = $form.find('#event_name').val();
+                    jsonForm.flagship = $form.find('#flagship').find('input[name="flagship"]:checked').val();
+                    jsonForm.startTime = new Date($form.find('#startDate').val()+" "+$form.find('#startTime').val()).getTime();
+                    jsonForm.endTime = new Date($form.find('#endDate').val()+" "+$form.find('#endTime').val()).getTime();
+                    jsonForm.venue = $form.find('#venue').val();
+                    jsonForm.description = $form.find('#event_description').val();
+                    jsonForm.coordinators = [];
+                    $form.find('.coordinator').each(function(){
+                        let name = $(this).find('.coordinator_name').val();
+                        let number = $(this).find('.coordinator_number').val();
+                        jsonForm.coordinators.push({coordinator_name:name,coordinator_number:number});
+                    })
+                    jsonForm.rules = [];
+                    $form.find('.rule_container').each(function(){
+                        jsonForm.rules.push($(this).find('.rule').val());
+                    });
+                    jsonForm.file = $form.find('#file').val();
+                    let finalForm = {"eventData" : jsonForm}
+                    let requestPostUrl = url + "events";
+                    $.ajax({
+                           url: requestPostUrl,
+                           data: finalForm,
+                           type: "POST",
+                           headers:{
+                             'Content-Type': "application/x-www-form-urlencoded",
+                             'Authorization': token
+                           },
+                           success: function(result, status) {
+                                if(status == 'success')
+                                {
+                                  alert('Data input Successful');
+                                }
+                                //clearing form
+                                resetForm();
+                                },
+
+                        });
+                }
+
+            })
+
+            //to get event eventData
+            const requestEventDataUrl = url + 'events/description';
+            //let eventData = "No event present with specified parameters"
+            function getEventData(eventCategory, eventName){
+                $('#events').css('opacity','0.4');
+                let eventData = {};
+                return new Promise(function(res){
+                    $.get(requestEventDataUrl, {'eventCategory' : eventCategory}, function(result){
+                        let data = result.data;
+                        let allData = data.events;
+                        for(let value of allData){
+                            if(value.eventName === eventName){
+                                eventData = value;
+                                break;
+                            }
+                        }
+                        resetForm();
+                        res(eventData);
+                    });
+                })
+            }
+            //getEventData('coding', 'gamestation');
+            function getDateTime(timestamp){
+                let myDate = {
+                    date:null,
+                    time:null
+                }
+                let date = timestamp.toLocaleDateString();
+                let z = date.split('/');
+                z.reverse();
+                if(z[1].length == 1){
+                    z[1] = '0'+z[1];
+                }
+                if(z[2].length == 1){
+                    z[2] = '0'+z[2];
+                }
+                //swap month and date to match html date format
+                let m = z[1];
+                z[1] = z[2];
+                z[2] = m;
+                myDate.date = z.join('-');
+                myDate.time = timestamp.toTimeString().slice(0,8);
+
+                return myDate;
+
+            }
+            //update functionality
+            $('.search-form').on('submit',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                let eventCategory = $(".search-form #search_category option:selected").val();
+                let eventName = $(".search-form #event option:selected").val();
+                getEventData(eventCategory.replace(/\$/g," "),eventName.replace(/\$/g," ")).then(function(event){
+                    console.log(event,"the event");
+                    $('#events').css('opacity','1');
+                    $form.find('#category').val(event.eventCategory);
+                    $form.find('#category').removeClass('invalid');
+                    $form.find('#category').next('small').removeClass('invalid-text');
+                    $form.find('#event_name').val(event.eventName);
+                    let flagship = event.flagship != undefined ? event.flagship : false;
+                    $form.find('#flagship').find('input:radio[name="flagship"]').filter('[value="'+flagship+'"]').attr('checked',true);
+                    $form.find('#venue').val(event.venue);
+                    $form.find('#event_description').val(event.description);
+                    $form.find('#file').val(event.file);
+                    if(event.coordinators!=undefined){
+                        event.coordinators.forEach(function(coordinator){
+                            let $c = $coordinator.clone();
+                            $c.find('.coordinator_name').val(coordinator.coordinator_name);
+                            $c.find('.coordinator_number').val(coordinator.coordinator_number);
+                            $c.find('.close_modal').on('click',function(e){
+                                $(this).parent().remove();
+                            })
+                            $cor_container.append($c);
+                        });
+                    }
+                    if(event.rules!=undefined){
+                        event.rules.forEach(function(rule){
+                            let $r = $rule.clone();
+                            $r.find('.rule').val(rule);
+                            $r.find('.close_modal').on('click',function(e){
+                                $(this).parent().remove();
+                            })
+                            $rules_container.append($r);
+                        });
+                    }
+                    
+                    //calculating dates
+
+                    let startTimestamp = new Date(event.startTime);
+                    let start = getDateTime(startTimestamp);
+                    $form.find('#startDate').val(start.date);
+                    $form.find('#startTime').val(start.time);
+                    let endTimeStamp = new Date(event.endTime);
+                    let end = getDateTime(endTimeStamp);
+                    $form.find('#endDate').val(end.date);
+                    $form.find('#endTime').val(end.time);
+
+
+                }).catch(function(e){
+                    console.log(e);
+                })
+
+            })
+        })
+
+    
+
+    </script>
+</html>
